@@ -23,13 +23,15 @@
 
 <script>
     let rsa_key
-
+    let row_seed='SeCuRe_SeeD!'
+    let seed=''
     const change_log = (text) => {
         document.getElementById('log').innerHTML = text
     }
 
 
     let main_html = `
+    <p>your public key down the page,you could share it and pelese change a default seed.seed most same with your friend</p>
     seed: <input type="text" id='seed' placeholder="same seed"><br>
     message for encrypt<br>
     <textarea id="mes" cols="30" rows="10"></textarea><br>
@@ -48,45 +50,55 @@
 
             gen_rsa_key().then(res => {
                 rsa_key = res
-                change_log('your public key is : <br><textarea cols="30" rows="10" >' + rsa_key.p_key + '</textarea> <br>  <button onclick="main_htm()">go to encrypt page</button>')
+                change_log('your public key is : <br><textarea cols="30" rows="10" >' + rsa_key.p_key + '</textarea> <br> ')// <button onclick="main_htm()">go to encrypt page</button>')
+                main_htm()
             })
         }
     }
 
     async function gen_rsa_key() {
-        let pass = SHA256(SHA256(SHA256(document.getElementById('pass').value)))
+        let pass = SHA256(SHA256(document.getElementById('pass').value))
         document.getElementById('pass').value = pass
-        let key = key_rsa(pass, 1024)
+        let key = key_rsa(pass, 512)
         return key;
     }
 
+
+
     const enc = () => {
         let mes = document.getElementById('mes').value
-        let seed = SHA256(SHA256(SHA256(document.getElementById('seed').value)))
+        if (row_seed != document.getElementById('seed').value) {
+            seed = SHA256(SHA256(document.getElementById('seed').value))
+            row_seed =document.getElementById('seed').value
+          }
+
+
         let p_key = document.getElementById('public_key').value
-        let aes_key = randstr(128)
+        let aes_key = generatePassword(16)
         let enc_mes = aes_enc(aes_key, mes)
         let enc_aes_key = rsa_enc(p_key, aes_key)
-            //console.log('enc_mes:' + enc_mes)
-            //console.log('enc_aes_key:', enc_aes_key)
-            //console.log('seed:' + seed)
         document.getElementById('mes').value = enc_mes + seed + enc_aes_key
 
     }
     const dec = () => {
         let cipher_text = document.getElementById('enc_mes').value
-        let seed = SHA256(SHA256(SHA256(document.getElementById('seed').value)))
+        if (row_seed != document.getElementById('seed').value) {
+            seed = SHA256(SHA256(document.getElementById('seed').value))
+            row_seed =document.getElementById('seed').value
+          }
+
         let arr = cipher_text.split(seed)
         enc_aes_key = arr[1]
         enc_mes = arr[0]
         dec_aes_key = rsa_dec(rsa_key.s_key, enc_aes_key)
         dec_mes = aes_dec(dec_aes_key, enc_mes)
         document.getElementById('enc_mes').value = dec_mes
-
     }
 
     const main_htm = () => {
         document.getElementById('h2').innerHTML = main_html
+        document.getElementById('seed').value = row_seed
+        seed = SHA256(SHA256(document.getElementById('seed').value))
     }
 </script>
 

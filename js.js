@@ -30,3 +30,56 @@ function aes_dec(sec_key, enc_msg) {
 function randstr(byte) {
     return CryptoJS.lib.WordArray.random(byte).toString();
 }
+
+function generatePassword(length) {
+        var charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789~`!@#$%^&*()_+=-{}[]'/?.><,\\\"`"
+        var retVal = "";
+    for (var i = 0, n = charset.length; i < length; ++i) {
+        retVal += charset.charAt(Math.floor(Math.random() * n));
+    }
+    return retVal;
+}
+
+
+var Base64 = (function () {
+
+var ALPHA = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+/';
+
+var Base64 = function () {};
+
+var _encode = function (value) {
+
+  if (typeof(value) !== 'number') {
+      throw 'Value is not number!';
+  }
+
+  var result = '', mod;
+  do {
+      mod = value % 64;
+      result = ALPHA.charAt(mod) + result;
+      value = Math.floor(value / 64);
+  } while(value > 0);
+
+  return result;
+};
+
+var _decode = function (value) {
+
+  var result = 0;
+  for (var i = 0, len = value.length; i < len; i++) {
+      result *= 64;
+      result += ALPHA.indexOf(value[i]);
+  }
+
+  return result;
+};
+
+Base64.prototype = {
+  constructor: Base64,
+  encode: _encode,
+  decode: _decode
+};
+
+return Base64;
+
+})();
