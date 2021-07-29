@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+
+    <script src="js.js"></script>
+    <link rel="stylesheet" href="mini.css">
+
+    </script>
+  </head>
+
+  <body>
+
+    <input id="ip_enc" type="text" name="" value="" placeholder="ip"> <button type="button" name="button" onclick="ip2radix64()">encode</button> <br>
+    <input id="ip_dec" type="text" name="" value="" placeholder="encrypt ip"> <button type="button" name="button" onclick="radix64toip()">decode</button> <br>
+
+
+  </body>
+  <script type="text/javascript">
+
+    const ip2radix64 = ()=>{
+      let base64 = new Base64();
+      let res=''
+      let ip = document.getElementById('ip_enc').value
+      ip = ip.split('.')
+      for (var i = 0; i < 4; i++) {
+          res+=base64.encode(parseInt(ip[i]))+' '
+          document.getElementById('ip_enc').value = res.slice(0,res.length-1)
+      }
+    }
+      const radix64toip = ()=>{
+        let base64 = new Base64();
+        let res=''
+        let ip = document.getElementById('ip_dec').value
+        ip = ip.split(' ')
+        for (var i = 0; i < 4; i++) {
+          res+=base64.decode(ip[i])+'.'
+        }
+            document.getElementById('ip_dec').value = res.slice(0,res.length-1)
+
+      }
+  </script>
+</html>
